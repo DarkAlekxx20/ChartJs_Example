@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SITO & CharJS</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous"/>
+  </head>
+  <body>
+    <div>
+      <h2>Gestion de Maestros</h2>
+      <form action="" class="">
+        <label for="">ID:</label>
+        <input class="form-control" type="text" id="idMaestro" disabled />
+        <label for="">ID Usuario:</label>
+        <input class="form-control" type="text" id="idUsuario" disabled />
+        <label>Nombres:</label>
+        <input class="form-control" type="text" id="nombres" placeholder="Introduce el o los nombres."/>
+        <label for="">Apellidos:</label>
+        <input class="form-control" type="text" id="ape1" placeholder="Introduce el primer apellido."/>
+        <input class="form-control" type="text" id="ape2" placeholder="Introduce el segundo apellido."/>
+        <label for="">Matricula:</label>
+        <input class="form-control" type="text" id="matriculaM" placeholder="Introduzca la matricula."/>
+        <fieldset id="areaM" style="margin-top: 10px; margin-bottom: 10px">
+          <legend style="font-size: 15px">Area:</legend>
+          <label>
+            <input id="rbtn1" type="radio" name="area" value="DSM" /> Desarrollo de Software</label>
+          <label>
+            <input id="rbtn2" type="radio" name="area" value="GS" /> Gastronomia </label>
+          <label>
+            <input id="rbtn3" type="radio" name="area" value="EVN" /> Entoros Virtuales
+          </label>
+        </fieldset>
+
+        <label for="">Nombre de Usuario:</label><hr>
+        <input class="form-control" type="text" id="nombreUsuario" placeholder="Introduzca el nombre de usuario."/>
+        <label for="">Contraseña:</label>
+        <input class="form-control" type="text" id="contrasenia" placeholder="Introduzca la contraseña."/>
+        <label for="">Correo:</label>
+        <input class="form-control" type="text" id="correo" placeholder="Introduzca el Correo electrónico"/>
+      </form>
+
+      <div class="botonesMaestros">
+        <button class="btn btn-success" onclick="moduloMaestros.save();">
+          Guardar
+        </button>
+        <button class="btn btn-warning">Eliminar</button>
+        <button class="btn btn-primary" onclick="moduloMaestros.clean();">
+          Limpiar
+        </button>
+      </div>
+
+      <table id="tmaes" class="table table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Nombre</th>
+            <th>Primer Apellido</th>
+            <th>Segundo Apellido</th>
+            <th>Matricula</th>
+            <th>Area</th>
+          </tr>
+        </thead>
+        <tbody id="tblMaestros"></tbody>
+        <!--GRAFICO-->
+        <canvas id="maestrosPorArea">
+
+
+        </canvas>
+      </table>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="JS/function.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </body>
+</html>
