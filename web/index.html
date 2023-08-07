@@ -41,11 +41,11 @@
       </form>
 
       <div class="botonesMaestros">
-        <button class="btn btn-success" onclick="moduloMaestros.save();">
+        <button class="btn btn-success" onclick="save();">
           Guardar
         </button>
         <button class="btn btn-warning">Eliminar</button>
-        <button class="btn btn-primary" onclick="moduloMaestros.clean();">
+        <button class="btn btn-primary" onclick="clean();">
           Limpiar
         </button>
       </div>
@@ -62,12 +62,18 @@
         </thead>
         <tbody id="tblMaestros"></tbody>
         <!--GRAFICO-->
-        <canvas id="maestrosPorArea">
+      <div style="width: 35%; height: 35%;">
+       <canvas id="maestrosPorArea">
 
 
         </canvas>
+      </div> 
+      <button onclick="generarPDF();" class="btn btn-danger">Generate PDF</button>
       </table>
     </div>
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="JS/function.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

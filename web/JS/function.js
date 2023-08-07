@@ -1,13 +1,16 @@
 let indexMaestroSeleccionado;
 let maestros = [];
 
-export function inicializar() {
+ /*function inicializar() {
   /* configureTableFilter(document.getElementById("txtBusquedaEmpleado"),
-      document.getElementById("tmaes"));*/
+      document.getElementById("tmaes"));
   refrescarTabla();
-}
+}*/
 
-export function obtenerValorRadioArea() {
+document.addEventListener("DOMContentLoaded", refrescarTabla);
+document.addEventListener("DOMContentLoaded", actualizarGrafico);
+
+ function obtenerValorRadioArea() {
   // Obtener el fieldset por su ID
   var areaM = document.getElementById("areaM");
   // Obtener todos los elementos input tipo radio dentro del fieldset
@@ -24,7 +27,7 @@ export function obtenerValorRadioArea() {
   return valorSeleccionado;
 }
 
-export function obtenerValorRadioRol() {
+function obtenerValorRadioRol() {
   // Obtener el fieldset por su ID
   var areaM = document.getElementById("rol");
 
@@ -45,39 +48,101 @@ export function obtenerValorRadioRol() {
 }
 
 function actualizarGrafico() {
-  const areas = {};
+ /* const areas = {};
   for (const maestroC of maestros) {
     if(areas[maestroC.area]){
       areas[maestroC.area]++;
     }else{
       areas[maestroC.area] = 1;
-    }
+    }*/
+
+    
+    fetch('api/maestro/getAll')
+    .then(response => response.json()) // Asegúrate de que la respuesta esté en formato JSON
+    .then(data => {
+
+      
+      // Paso 2: Procesa los datos obtenidos
+      const maestrosPorArea = {}; // Objeto para mantener el recuento de maestros por área
+
+      data.forEach(item => {
+        if (maestrosPorArea[item.area]) {
+          maestrosPorArea[item.area]++;
+        } else {
+          maestrosPorArea[item.area] = 1;
+        }
+      });
+      const datasets = [];
+
+      // Iterar sobre los datos y crear los conjuntos de datos con colores aleatorios
+      data.forEach(item => {
+        const dataset = {
+          label: 'Datos',
+          data: item.data, // Usar los datos correspondientes desde la base de datos
+          backgroundColor: `rgba(${getRandomColor()}, ${getRandomColor()}, ${getRandomColor()}, 0.2)`, // Color de fondo aleatorio
+          borderColor: `rgba(${getRandomColor()}, ${getRandomColor()}, ${getRandomColor()}, 1)`, // Color del borde aleatorio
+          borderWidth: 1,
+        };
+        datasets.push(dataset);
+      });
+
+      // Función para obtener un valor aleatorio entre 0 y 255
+      function getRandomColor() {
+        return Math.floor(Math.random() * 256);
+      }
+
+
+      const labels = Object.keys(maestrosPorArea); // Áreas serán las etiquetas del gráfico
+      const values = Object.values(maestrosPorArea); // Número de maestros por área
+
+      // Paso 3: Crea y configura el gráfico con Chart.js
+      const ctx = document.getElementById('maestrosPorArea').getContext('2d');
+      const miGrafico = new Chart(ctx, {
+        type: 'pie', // Puedes cambiar el tipo de gráfico según tus necesidades
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Número de Maestros por Área',
+            data: values,
+            
+            borderWidth: 1 // Grosor del borde de las barras
+          }]
+        },
+        options: {
+          responsive: true,
+
+
+          
+          
+
+
+          scales: {
+            y: {
+              beginAtZero: true, // Iniciar eje y en cero
+              title: {
+                display: true,
+                text: 'Maestros' // Etiqueta personalizada para el eje y
+              },
+              ticks: {
+                callback: function (value, index, values) {
+                  if (Number.isInteger(value)) {
+                    return value; // Mostrar solo números enteros
+                  }
+                }
+              }
+            }
+          },
+
+        }
+      });
+    })
+    .catch(error => console.error('Error al obtener los datos:', error));
+
+
+
   }
 
-  const ctx = document.getElementById('maestrosPorArea').getContext('2d');
-  const myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: Object.keys(areas),
-      datasets: [{
-        label: 'Maestros por Área',
-        data: Object.values(areas),
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-}
-
-export function save() {
+ function save() {
   var idMaestro = document.getElementById("idMaestro").value;
   var idUsuario = document.getElementById("idUsuario").value;
   var nombre = document.getElementById("nombres").value;
@@ -102,7 +167,7 @@ export function save() {
   let params = null;
 
   let maestro = new Object();
-  maestro.user = new Object();
+  maestro.usuario = new Object();
 
   if (
     nombre !== "" &&
@@ -133,26 +198,26 @@ export function save() {
 
     if (idMaestro === 0 || idMaestro === "") {
       maestro.idMaestro = 0;
-      maestro.user.idUsuario = 0;
+      maestro.usuario.idUsuario = 0;
     } else {
       maestro.idMaestro = idMaestro;
-      maestro.user.idUsuario = idUsuario;
+      maestro.usuario.idUsuario = idUsuario;
     }
 
     maestro.nombre = nombre;
-    maestro.ape1 = ape1;
-    maestro.ape2 = ape2;
+    maestro.apePaterno = ape1;
+    maestro.apeMaterno = ape2;
     maestro.matricula = matricula;
     maestro.area = area;
-    maestro.user.nombreUsuario = nombreUsuario;
-    maestro.user.contrasenia = contrasenia;
-    maestro.user.rol = "maestro";
-    maestro.user.correo = correo;
+    maestro.usuario.nombreUsuario = nombreUsuario;
+    maestro.usuario.contrasenia = contrasenia;
+    maestro.usuario.rol = "maestro";
+    maestro.usuario.correo = correo;
 
     datos = { datosMaestro: JSON.stringify(maestro) };
     params = new URLSearchParams(datos);
     fetch(
-      "../api/maestro/save", //Se pone la ruta del servicio
+      "api/maestro/save", //Se pone la ruta del servicio
       {
         method: "POST", //el tipo de metodo que tenemos que definir que es POST si no se pone nada por default se Pone en GET
         headers: {
@@ -189,14 +254,16 @@ export function save() {
         actualizarGrafico();
       });
     alert("todo bien.");
+    actualizarGrafico();
     console.log(JSON.stringify(maestro));
   } else {
     alert("Campos vacios");
   }
+  actualizarGrafico();
 }
 
-export function refrescarTabla() {
-  let url = "../api/maestro/getAll";
+function refrescarTabla() {
+  let url = "api/maestro/getAll";
   fetch(url)
     .then((response) => {
       return response.json();
@@ -224,7 +291,7 @@ export function refrescarTabla() {
     });
 }
 
-export function clean() {
+ function clean() {
   document.getElementById("nombres").value = "";
   document.getElementById("ape1").value = "";
   document.getElementById("ape2").value = "";
@@ -237,7 +304,7 @@ export function clean() {
   }
 }
 
-export function selectMaestro(index) {
+ function selectMaestro(index) {
   document.getElementById("nombres").value = maestros[index].nombre;
   document.getElementById("ape1").value = maestros[index].ape1;
   document.getElementById("ape2").value = maestros[index].ape2;
@@ -263,7 +330,7 @@ export function selectMaestro(index) {
   indexMaestroSeleccionado = index;
 }
 
-export function loadTabla(data) {
+ function loadTabla(data) {
   maestros = data;
   let cuerpo = "";
   let resultadoEstatus = maestros.filter(
@@ -271,17 +338,17 @@ export function loadTabla(data) {
   );
   maestros.forEach(function (maestro) {
     let registro =
-      '<tr onclick="moduloMaestros.selectMaestro(' +
+      '<tr onclick="selectMaestro(' +
       maestros.indexOf(maestro) +
       ');">' +
       "<td>" +
       maestro.nombre +
       "</td>" +
       "<td>" +
-      maestro.ape1 +
+      maestro.apePaterno +
       "</td> " +
       "<td>" +
-      maestro.ape2 +
+      maestro.apeMaterno +
       "</td>" +
       "<td>" +
       maestro.matricula +
@@ -293,3 +360,33 @@ export function loadTabla(data) {
   });
   document.getElementById("tblMaestros").innerHTML = cuerpo;
 }
+
+
+
+/*function generatePDF() {
+  const canvas = document.getElementById('maestrosPorArea');
+  const dataURL = canvas.toDataURL('image/jpeg', 1.0);
+  const pdf = jspdf()
+  pdf.addImage(dataURL, 'JPEG', 10, 10, 180, 90);
+  pdf.save('chart.pdf');
+}*/
+
+
+
+    // Función para generar el PDF con jsPDF
+    function generarPDF() {
+      // Obtener el contenido HTML del gráfico
+      const chartCanvas = document.getElementById('maestrosPorArea');
+      const chartImage = chartCanvas.toDataURL('image/png');
+
+      
+      const { jsPDF } = window.jspdf;
+      // Crear un nuevo documento PDF
+      const pdf = new jsPDF();
+
+      // Agregar el gráfico al PDF
+      pdf.addImage(chartImage, 'PNG', 10, 10, 100, 100); // Ajusta las coordenadas y el tamaño del gráfico en el PDF
+
+      // Guardar el PDF y descargarlo
+      pdf.save('grafico.pdf');
+    }
